@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  lang="en"
+>
+  <head>
+    <title>Token Creation Logs</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Open Sans", sans-serif;
+        background-color: #eef1f4;
+        padding-top: 70px;
+      }
+      .navbar-custom {
+        background-color: #007bff;
+      }
+      .navbar-custom .navbar-brand,
+      .navbar-custom .navbar-text {
+        color: white;
+      }
+      .table-custom {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        margin-top: 80px;
+      }
+      .table th,
+      .table td {
+        border: none;
+      }
+      .table thead th {
+        background-color: #007bff;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Token Transaction Logs</h2>
+      <table class="table table-custom">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">토큰 수</th>
+            <th scope="col">User ID</th>
+            <th scope="col">시간(분)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="log, iterStat : ${tockenList}">
+            <th scope="row" th:text="${iterStat.count}">1</th>
+            <td th:text="${log.numOfTocken}">1000</td>
+            <td th:text="${log.userId}">user123</td>
+            <td th:text="${log.duration}">3600</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

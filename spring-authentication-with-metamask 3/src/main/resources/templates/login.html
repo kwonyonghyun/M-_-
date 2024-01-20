@@ -1,0 +1,105 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Login page</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <title>Login page</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+        <style>
+            body {
+                font-family: 'Open Sans', sans-serif;
+                background-color: #eef1f4;
+                padding-top: 70px;
+            }
+            .navbar-custom {
+                background-color: #007bff;
+            }
+            .navbar-custom .navbar-brand,
+            .navbar-custom .navbar-text {
+                color: white;
+            }
+            .card-custom {
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                background-color: white;
+                margin-top: 80px;
+            }
+            .form-custom {
+                padding: 2rem;
+            }
+            .btn-custom {
+                background-color: #007bff;
+                border: none;
+            }
+            .text-danger-custom {
+                color: #dc3545;
+            }
+        </style>
+    </head>
+    <body>
+
+
+    <div class="container">
+        <div class="card card-custom">
+            <div class="card-body form-custom">
+                <h3 class="form-signin-heading">Please sign in</h3>
+                <p th:if="${param.error}" class="text-danger-custom">Invalid signature</p>
+                <button class="btn btn-lg btn-custom btn-block" type="submit" onclick="login()">Login with MetaMask</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        async function login() {
+            if (!window.ethereum) {
+                console.error('Please install MetaMask');
+                return;
+            }
+
+            // Prompt user to connect MetaMask
+            const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+            const address = accounts[0];
+
+            // Receive nonce and sign a message
+            const nonce = await getNonce(address);
+            const message = `Signing a message to login: ${nonce}`;
+            const signature = await window.ethereum.request({method: 'personal_sign', params: [message, address]});
+
+            // Login with signature
+            await sendLoginData(address, signature);
+        }
+
+        async function getNonce(address) {
+            return await fetch(`/nonce/${address}`)
+                .then(response => response.text());
+        }
+
+        async function sendLoginData(address, signature) {
+            return fetch('/login', {
+                method: 'POST',
+                headers: {'content-type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({
+                    address: encodeURIComponent(address),
+                    signature: encodeURIComponent(signature)
+                })
+            }).then((response) => window.location.href = response.url);
+        }
+
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    </body>
+    </html>
